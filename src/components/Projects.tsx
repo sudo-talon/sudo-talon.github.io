@@ -5,11 +5,23 @@ import project3Image from '@/assets/project3.png';
 
 const projects = [
   {
-    title: 'CI/CD Pipeline with Terraform & Jenkins on AWS',
-    description: 'Complete End-to-End DevOps Implementation deploying a NodeJS Application using Terraform, Jenkins, Docker, Kubernetes (EKS), Prometheus, Grafana, and ArgoCD for GitOps.',
+    title: 'Upwork: DevOps engagement',
+    description: 'Engagement details and deliverables available on the Upwork project page.',
     image: project1Image,
-    technologies: ['Terraform', 'Jenkins', 'AWS EKS', 'Docker', 'Helm', 'ArgoCD', 'Prometheus', 'Grafana'],
+    technologies: ['DevOps', 'Consulting', 'Upwork'],
     link: 'https://www.upwork.com/freelancers/~01959a6d6548cff4b8?p=1811493937702604800',
+    highlights: [
+      'Process optimization and CI/CD guidance',
+      'On-demand DevOps consulting',
+      'Deliverables documented on Upwork',
+    ],
+  },
+  {
+    title: 'Upwork: CI/CD pipeline work',
+    description: 'Highlights from a CI/CD implementation documented on Upwork work history.',
+    image: project2Image,
+    technologies: ['CI/CD', 'Jenkins', 'GitOps'],
+    link: 'https://www.upwork.com/freelancers/~01959a6d6548cff4b8?p=1813513341475491840',
     highlights: [
       'Fully automated infrastructure provisioning',
       'GitOps workflow with ArgoCD',
@@ -17,28 +29,30 @@ const projects = [
     ],
   },
   {
-    title: 'AWS Infrastructure Automation',
-    description: 'Comprehensive cloud infrastructure automation project implementing IaC principles with Terraform for scalable, secure, and cost-optimized AWS deployments.',
-    image: project2Image,
-    technologies: ['AWS', 'Terraform', 'CloudFormation', 'IAM', 'VPC', 'S3', 'RDS'],
-    link: 'https://www.upwork.com/freelancers/~01959a6d6548cff4b8?p=1813513341475491840',
+    title: 'Medium: End-to-end DevOps CI/CD with Terraform and Jenkins on AWS',
+    description: 'Case study documenting a complete CI/CD pipeline and cloud-native tooling.',
+    image: project3Image,
+    technologies: ['Terraform', 'AWS', 'Jenkins'],
+    link: 'https://medium.com/@sudotalon/complete-end-to-end-devops-implementation-ci-cd-pipeline-with-terraform-and-jenkins-on-aws-to-5648f92d19eb',
     highlights: [
-      'Multi-region deployment strategy',
-      'Security-first architecture',
-      'Cost optimization implementation',
+      'Infrastructure as Code with Terraform',
+      'CI/CD orchestration via Jenkins',
+      'Monitoring and observability with Prometheus & Grafana',
     ],
   },
   {
-    title: 'Amazon Prime Clone - DevOps Project',
-    description: 'End-to-end DevOps implementation for deploying an Amazon Prime Video clone using modern CI/CD practices, container orchestration, and cloud-native technologies.',
-    image: project3Image,
-    technologies: ['GitHub', 'Jenkins', 'SonarQube', 'Docker', 'Trivy', 'Kubernetes', 'Terraform', 'Grafana'],
-    link: 'https://medium.com/@sudotalon/complete-end-to-end-devops-implementation-ci-cd-pipeline-with-terraform-and-jenkins-on-aws-to-5648f92d19eb',
+    title: 'Comprehensive Malware Scan, Removal and Restoration (Big Database)',
+    description: 'The blog was recently compromised by malware, affecting its functionality, security, and user experience with pages and links not opening, others redirecting to strange websites. The project includes malware removal, website restoration, security hardening, and performance optimization.',
+    image: project1Image,
+    technologies: ['SQL', 'phpMyAdmin', 'FTP', 'Database Management', 'WordPress'],
+    link: 'https://example.com/',
     highlights: [
-      'Security scanning with SonarQube & Trivy',
-      'Container orchestration with EKS',
-      'Comprehensive documentation on Medium',
+      'Malware scan and removal',
+      'Site restoration and link fix',
+      'Security hardening and patching',
+      'Performance optimization',
     ],
+    publishedDate: 'Jul 11, 2024',
   },
 ];
 
@@ -115,15 +129,22 @@ export const Projects = () => {
                 </div>
 
                 {/* Links */}
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary hover:underline"
-                >
-                  <ExternalLink size={16} />
-                  <span>View Project Details</span>
-                </a>
+                <div className="flex items-center gap-4">
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:underline"
+                  >
+                    <ExternalLink size={16} />
+                    <span>View Project Details</span>
+                  </a>
+                  {(project as any).publishedDate && (
+                    <span className="text-xs text-muted-foreground">
+                      Published {(project as any).publishedDate}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
