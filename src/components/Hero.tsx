@@ -95,11 +95,18 @@ export const Hero = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-2 -right-2 px-4 py-2 bg-terminal-green/20 border border-terminal-green rounded-full">
+              <div className="absolute -bottom-2 -right-2 px-4 py-2 bg-terminal-green/20 border border-terminal-green rounded-full flex items-center gap-3">
                 <span className="text-terminal-green text-sm font-mono flex items-center gap-2">
                   <span className="w-2 h-2 bg-terminal-green rounded-full animate-pulse" />
                   Available
                 </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-[hsl(200,100%,60%)]">Blue</span>
+                  <div className="w-8 h-4 rounded-full bg-primary/30 relative">
+                    <div className="absolute right-0.5 top-0.5 w-3 h-3 rounded-full bg-terminal-green" />
+                  </div>
+                  <span className="text-xs text-terminal-green">Green</span>
+                </div>
               </div>
             </div>
           </div>
@@ -108,7 +115,7 @@ export const Hero = () => {
           <div className="order-1 lg:order-2 text-center lg:text-left">
             <p className="font-mono text-muted-foreground mb-2">&gt; Hello, I'm</p>
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              <span className="gradient-text">Ikerionwu Ifeanyi</span>
+              Engr Ikerionwu <span className="gradient-text">Ifeanyi</span>
             </h1>
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">

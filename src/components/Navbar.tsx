@@ -6,7 +6,8 @@ const navLinks = [
   { href: '#skills', label: 'Skills' },
   { href: '#experience', label: 'Experience' },
   { href: '#achievements', label: 'Achievements' },
-  { href: '#projects', label: 'Projects' },
+  { href: '#certifications', label: 'Certifications' },
+  { href: '#publications', label: 'Publications' },
   { href: '#contact', label: 'Contact' },
 ];
 
@@ -30,21 +31,27 @@ export const Navbar = () => {
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <a href="#" className="font-mono text-primary text-lg">
-            &lt;<span className="text-foreground">Ikerionwu Ifeanyi Fredrick</span>/&gt;
+          <a href="#" className="font-mono text-primary text-xl">
+            &lt;<span className="text-foreground">II</span>/&gt;
           </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                className="text-muted-foreground hover:text-primary transition-colors text-sm font-mono"
               >
                 {link.label}
               </a>
             ))}
+            <a
+              href="/login"
+              className="px-4 py-2 rounded-md bg-transparent border border-primary/50 text-primary text-sm font-mono hover:bg-primary/10 transition-colors"
+            >
+              Login
+            </a>
           </div>
 
           {/* Mobile Menu Button */}

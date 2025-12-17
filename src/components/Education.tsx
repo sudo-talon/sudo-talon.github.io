@@ -64,7 +64,7 @@ const memberships = [
 
 export const Education = () => {
   return (
-    <section className="py-24 bg-card">
+    <section id="certifications" className="py-24 bg-card">
       <div className="container mx-auto px-6">
         {/* Education & Certifications */}
         <div className="mb-20">
@@ -117,7 +117,7 @@ export const Education = () => {
         </div>
 
         {/* Publications & Memberships */}
-        <div>
+        <div id="publications">
           <div className="text-center mb-16">
             <p className="section-label">// Thought Leadership</p>
             <h2 className="text-3xl md:text-4xl font-bold">
