@@ -48,7 +48,7 @@ export const Navbar = () => {
             ))}
             <a
               href="/login"
-              className="px-4 py-2 rounded-md bg-transparent border border-primary/50 text-primary text-sm font-mono hover:bg-primary/10 transition-colors"
+              className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-mono hover:bg-primary/90 transition-colors"
             >
               Login
             </a>
@@ -77,6 +77,13 @@ export const Navbar = () => {
                   {link.label}
                 </a>
               ))}
+              <a
+                href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-mono hover:bg-primary/90 transition-colors text-center"
+              >
+                Login
+              </a>
             </div>
           </div>
         )}
