@@ -3,8 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, User, Briefcase, GraduationCap, Award, FileText, Mail, Loader2 } from 'lucide-react';
+import { LogOut, User, Briefcase, GraduationCap, Award, FileText, Mail, Loader2, FolderKanban } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { ProjectsManager } from '@/components/admin/ProjectsManager';
+import { ExperienceManager } from '@/components/admin/ExperienceManager';
+import { EducationManager } from '@/components/admin/EducationManager';
+import { AchievementsManager } from '@/components/admin/AchievementsManager';
+import { PublicationsManager } from '@/components/admin/PublicationsManager';
 
 const Admin = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -25,7 +30,6 @@ const Admin = () => {
 
       setUser(session.user);
 
-      // Check if user is admin
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -48,7 +52,7 @@ const Admin = () => {
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         navigate('/login');
       }
@@ -68,11 +72,11 @@ const Admin = () => {
 
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: User },
+    { id: 'projects', label: 'Projects', icon: FolderKanban },
     { id: 'experience', label: 'Experience', icon: Briefcase },
     { id: 'education', label: 'Education', icon: GraduationCap },
     { id: 'achievements', label: 'Achievements', icon: Award },
     { id: 'publications', label: 'Publications', icon: FileText },
-    { id: 'contact', label: 'Contact Info', icon: Mail },
   ];
 
   if (loading) {
@@ -89,7 +93,6 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border p-6">
         <div className="mb-8">
           <a href="/" className="font-mono text-primary text-2xl">
@@ -120,18 +123,13 @@ const Admin = () => {
             <p className="text-sm font-medium text-foreground truncate">{user?.email}</p>
             <p className="text-xs text-muted-foreground">Administrator</p>
           </div>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleLogout}
-          >
+          <Button variant="outline" className="w-full" onClick={handleLogout}>
             <LogOut size={18} className="mr-2" />
             Logout
           </Button>
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="ml-64 p-8">
         <div className="max-w-4xl">
           <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -151,78 +149,17 @@ const Admin = () => {
                 >
                   <item.icon size={24} className="text-primary mb-4" />
                   <h3 className="font-semibold text-foreground">{item.label}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Click to manage
-                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">Click to manage</p>
                 </div>
               ))}
             </div>
           )}
 
-          {activeSection === 'experience' && (
-            <div className="bg-card border border-border rounded-xl p-6">
-              <p className="text-muted-foreground">
-                Experience management section. You can add, edit, and delete your work experience entries here.
-              </p>
-              <div className="mt-6 p-8 border-2 border-dashed border-border rounded-lg text-center">
-                <p className="text-muted-foreground">
-                  Database tables for content management will be added in the next step.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'education' && (
-            <div className="bg-card border border-border rounded-xl p-6">
-              <p className="text-muted-foreground">
-                Education and certifications management section.
-              </p>
-              <div className="mt-6 p-8 border-2 border-dashed border-border rounded-lg text-center">
-                <p className="text-muted-foreground">
-                  Database tables for content management will be added in the next step.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'achievements' && (
-            <div className="bg-card border border-border rounded-xl p-6">
-              <p className="text-muted-foreground">
-                Achievements and awards management section.
-              </p>
-              <div className="mt-6 p-8 border-2 border-dashed border-border rounded-lg text-center">
-                <p className="text-muted-foreground">
-                  Database tables for content management will be added in the next step.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'publications' && (
-            <div className="bg-card border border-border rounded-xl p-6">
-              <p className="text-muted-foreground">
-                Publications and research papers management section.
-              </p>
-              <div className="mt-6 p-8 border-2 border-dashed border-border rounded-lg text-center">
-                <p className="text-muted-foreground">
-                  Database tables for content management will be added in the next step.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'contact' && (
-            <div className="bg-card border border-border rounded-xl p-6">
-              <p className="text-muted-foreground">
-                Contact information management section.
-              </p>
-              <div className="mt-6 p-8 border-2 border-dashed border-border rounded-lg text-center">
-                <p className="text-muted-foreground">
-                  Database tables for content management will be added in the next step.
-                </p>
-              </div>
-            </div>
-          )}
+          {activeSection === 'projects' && <ProjectsManager />}
+          {activeSection === 'experience' && <ExperienceManager />}
+          {activeSection === 'education' && <EducationManager />}
+          {activeSection === 'achievements' && <AchievementsManager />}
+          {activeSection === 'publications' && <PublicationsManager />}
         </div>
       </main>
     </div>
