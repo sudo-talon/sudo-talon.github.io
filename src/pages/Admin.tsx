@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, User, Briefcase, GraduationCap, Award, FileText, Mail, Loader2, FolderKanban } from 'lucide-react';
+import { LogOut, User, Briefcase, GraduationCap, Award, FileText, Loader2, FolderKanban, MessageSquare } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { ProjectsManager } from '@/components/admin/ProjectsManager';
 import { ExperienceManager } from '@/components/admin/ExperienceManager';
 import { EducationManager } from '@/components/admin/EducationManager';
 import { AchievementsManager } from '@/components/admin/AchievementsManager';
 import { PublicationsManager } from '@/components/admin/PublicationsManager';
+import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
 
 const Admin = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -77,6 +78,7 @@ const Admin = () => {
     { id: 'education', label: 'Education', icon: GraduationCap },
     { id: 'achievements', label: 'Achievements', icon: Award },
     { id: 'publications', label: 'Publications', icon: FileText },
+    { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
   ];
 
   if (loading) {
@@ -160,6 +162,7 @@ const Admin = () => {
           {activeSection === 'education' && <EducationManager />}
           {activeSection === 'achievements' && <AchievementsManager />}
           {activeSection === 'publications' && <PublicationsManager />}
+          {activeSection === 'testimonials' && <TestimonialsManager />}
         </div>
       </main>
     </div>

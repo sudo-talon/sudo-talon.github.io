@@ -1,27 +1,47 @@
-import { Quote } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Quote, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-const testimonials = [
-  {
-    quote: "Ifeanyi's expertise in DevOps and cloud infrastructure transformed our deployment processes. His implementation of CI/CD pipelines reduced our deployment time by 40% while improving system reliability.",
-    author: 'Lt. Col. A. Ibrahim',
-    role: 'Director of IT Operations',
-    organization: 'Ministry of Defence',
-  },
-  {
-    quote: "Working with Ifeanyi on our digital transformation project was exceptional. His deep understanding of security protocols and cloud architecture helped us achieve ISO 27000 compliance seamlessly.",
-    author: 'Brig. Gen. M. Usman',
-    role: 'Chief Information Officer',
-    organization: 'Nigerian Army HQ',
-  },
-  {
-    quote: "The infrastructure automation solutions delivered by Ifeanyi exceeded our expectations. His proactive approach to monitoring and security has been invaluable to our operations.",
-    author: 'Dr. O. Adeyemi',
-    role: 'CEO',
-    organization: 'Security Watch Africa',
-  },
-];
+interface TestimonialItem {
+  id: string;
+  quote: string;
+  author: string;
+  role: string | null;
+  organization: string | null;
+}
 
 export const Testimonials = () => {
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      const { data } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      
+      setTestimonials(data || []);
+      setLoading(false);
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24">
+        <div className="container mx-auto px-6 flex justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-24">
       <div className="container mx-auto px-6">
@@ -33,9 +53,9 @@ export const Testimonials = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={index}
+              key={testimonial.id}
               className="p-8 rounded-lg bg-card border border-border card-hover relative"
             >
               <Quote className="absolute top-6 right-6 text-primary/20" size={40} />
@@ -50,8 +70,12 @@ export const Testimonials = () => {
                 </div>
                 <div>
                   <p className="font-semibold text-foreground">{testimonial.author}</p>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  <p className="text-xs text-primary">{testimonial.organization}</p>
+                  {testimonial.role && (
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  )}
+                  {testimonial.organization && (
+                    <p className="text-xs text-primary">{testimonial.organization}</p>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,55 +1,29 @@
-import { GraduationCap, Award, BookOpen } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { GraduationCap, Award, BookOpen, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-const education = [
-  {
-    icon: GraduationCap,
-    title: 'Bachelor of Technology',
-    subtitle: 'Computer Science',
-    institution: 'Federal University of Technology Owerri',
-    period: 'Aug 2006 - Jun 2012',
-  },
-];
+interface EducationItem {
+  id: string;
+  degree: string;
+  field_of_study: string | null;
+  institution: string;
+  start_date: string | null;
+  end_date: string | null;
+}
 
-const certifications = [
-  {
-    title: 'Introduction to Generative AI',
-    issuer: 'AWS',
-    year: '2025',
-  },
-  {
-    title: 'Associate Cloud Engineer',
-    issuer: 'Google Cloud',
-    year: '2024',
-  },
-  {
-    title: 'Certified Open Source Intelligence Analyst',
-    issuer: 'Janes Defense, UK',
-    year: '',
-  },
-];
+interface PublicationItem {
+  id: string;
+  title: string;
+  publication_type: string | null;
+  publication_url: string | null;
+}
 
-const publications = [
-  {
-    title: 'Emergence of Cyber Caliphate and the Quest for Nigerian Army Cyber Command',
-    category: 'Cybersecurity',
-    link: 'https://blueprint.ng/emergence-of-cyber-caliphate-and-the-quest-for-nigerian-army-cyber-command-by-fredrick-ikerionwu/',
-  },
-  {
-    title: 'Cyber Warfare and National Security: Imperative for Nigerian Army Preparedness',
-    category: 'National Security',
-    link: 'https://www.military.africa/2018/09/nigerian-army-cyber-warfare-command/',
-  },
-  {
-    title: 'Complete End-to-End DevOps Implementation: CI/CD Pipeline with Terraform and Jenkins on AWS',
-    category: 'DevOps',
-    link: 'https://medium.com/@sudotalon/complete-end-to-end-devops-implementation-ci-cd-pipeline-with-terraform-and-jenkins-on-aws-to-5648f92d19eb',
-  },
-  {
-    title: 'AI, Robotics & the Future of National Security: Why Nigeria Must Prepare for a Post-Human Labour Economy',
-    category: 'AI & Future Tech',
-    link: 'https://defencetimesng.africa/2025/10/ai-robotics-the-future-of-national-security-why-nigeria-must-prepare-for-a-post-human-labour-economy/',
-  },
-];
+interface AchievementItem {
+  id: string;
+  title: string;
+  description: string | null;
+  icon: string | null;
+}
 
 const memberships = [
   {
@@ -63,6 +37,46 @@ const memberships = [
 ];
 
 export const Education = () => {
+  const [education, setEducation] = useState<EducationItem[]>([]);
+  const [publications, setPublications] = useState<PublicationItem[]>([]);
+  const [certifications, setCertifications] = useState<AchievementItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [eduRes, pubRes, certRes] = await Promise.all([
+        supabase.from('education').select('*').order('sort_order', { ascending: true }),
+        supabase.from('publications').select('*').order('sort_order', { ascending: true }),
+        supabase.from('achievements').select('*').eq('icon', 'certification').order('sort_order', { ascending: true }),
+      ]);
+
+      setEducation(eduRes.data || []);
+      setPublications(pubRes.data || []);
+      setCertifications(certRes.data || []);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  const formatPeriod = (start: string | null, end: string | null) => {
+    if (!start) return '';
+    const startDate = new Date(start).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    if (!end) return startDate;
+    const endDate = new Date(end).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return `${startDate} - ${endDate}`;
+  };
+
+  if (loading) {
+    return (
+      <section id="certifications" className="py-24 bg-card">
+        <div className="container mx-auto px-6 flex justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="certifications" className="py-24 bg-card">
       <div className="container mx-auto px-6">
@@ -78,40 +92,47 @@ export const Education = () => {
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Education */}
             <div className="p-6 rounded-lg bg-secondary border border-border">
-              {education.map((edu, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-primary/20">
-                    <edu.icon className="text-primary" size={24} />
+              {education.length > 0 ? (
+                education.map((edu) => (
+                  <div key={edu.id} className="flex items-start gap-4 mb-4 last:mb-0">
+                    <div className="p-3 rounded-lg bg-primary/20">
+                      <GraduationCap className="text-primary" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{edu.degree}</h3>
+                      {edu.field_of_study && <p className="text-primary">{edu.field_of_study}</p>}
+                      <p className="text-sm text-muted-foreground mt-1">{edu.institution}</p>
+                      <p className="text-xs text-muted-foreground">{formatPeriod(edu.start_date, edu.end_date)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{edu.title}</h3>
-                    <p className="text-primary">{edu.subtitle}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{edu.institution}</p>
-                    <p className="text-xs text-muted-foreground">{edu.period}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground text-center py-4">No education records yet.</p>
+              )}
             </div>
 
             {/* Certifications */}
             <div className="space-y-4">
-              {certifications.map((cert, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-lg bg-secondary border border-border flex items-center gap-4"
-                >
-                  <div className="p-2 rounded-lg bg-primary/20">
-                    <Award className="text-primary" size={20} />
+              {certifications.length > 0 ? (
+                certifications.map((cert) => (
+                  <div
+                    key={cert.id}
+                    className="p-4 rounded-lg bg-secondary border border-border flex items-center gap-4"
+                  >
+                    <div className="p-2 rounded-lg bg-primary/20">
+                      <Award className="text-primary" size={20} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-foreground">{cert.title}</h4>
+                      {cert.description && <p className="text-sm text-muted-foreground">{cert.description}</p>}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-foreground">{cert.title}</h4>
-                    <p className="text-sm text-muted-foreground">{cert.issuer}</p>
-                  </div>
-                  {cert.year && (
-                    <span className="text-xs font-mono text-primary">{cert.year}</span>
-                  )}
+                ))
+              ) : (
+                <div className="p-4 rounded-lg bg-secondary border border-border">
+                  <p className="text-muted-foreground text-center">No certifications yet.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
@@ -128,25 +149,33 @@ export const Education = () => {
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Publications */}
             <div className="space-y-4">
-              {publications.map((pub, index) => (
-                <a
-                  key={index}
-                  href={pub.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-4 rounded-lg bg-secondary border border-border card-hover"
-                >
-                  <div className="flex items-start gap-3">
-                    <BookOpen className="text-primary mt-1 flex-shrink-0" size={18} />
-                    <div>
-                      <h4 className="font-medium text-foreground hover:text-primary transition-colors">
-                        {pub.title}
-                      </h4>
-                      <span className="text-xs font-mono text-primary">{pub.category}</span>
+              {publications.length > 0 ? (
+                publications.map((pub) => (
+                  <a
+                    key={pub.id}
+                    href={pub.publication_url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-4 rounded-lg bg-secondary border border-border card-hover"
+                  >
+                    <div className="flex items-start gap-3">
+                      <BookOpen className="text-primary mt-1 flex-shrink-0" size={18} />
+                      <div>
+                        <h4 className="font-medium text-foreground hover:text-primary transition-colors">
+                          {pub.title}
+                        </h4>
+                        {pub.publication_type && (
+                          <span className="text-xs font-mono text-primary">{pub.publication_type}</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </a>
-              ))}
+                  </a>
+                ))
+              ) : (
+                <div className="p-4 rounded-lg bg-secondary border border-border">
+                  <p className="text-muted-foreground text-center">No publications yet.</p>
+                </div>
+              )}
             </div>
 
             {/* Memberships */}

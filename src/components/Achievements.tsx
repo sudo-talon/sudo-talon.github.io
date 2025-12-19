@@ -1,38 +1,22 @@
-import { Award, Rocket, Server, Shield, Users, Wrench } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Award, Rocket, Server, Shield, Users, Wrench, Loader2, LucideIcon } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-const achievements = [
-  {
-    icon: Award,
-    title: 'Golden Star Award',
-    description: 'Awarded for National Security Support Through Technological Excellence',
-    highlight: true,
-  },
-  {
-    icon: Rocket,
-    title: 'Founder, Talongeeks',
-    description: "Africa's first defence and intelligence-focused AI company, unlocking insights from scalable & unstructured data to enable real-time actionable intelligence",
-  },
-  {
-    icon: Server,
-    title: '40% Faster Deployments',
-    description: 'Reduced deployment time of client resources by optimizing CI/CD Pipelines using GitOps',
-  },
-  {
-    icon: Shield,
-    title: '99.9% Uptime',
-    description: 'Achieved for production environment by implementing robust monitoring with Prometheus and Grafana',
-  },
-  {
-    icon: Users,
-    title: 'Cyber Defense',
-    description: "Led a multidisciplinary team to redesign the client's official website and create and integrate its social media platforms, enhancing public engagement and civil–military relations",
-  },
-  {
-    icon: Wrench,
-    title: 'Technological Support',
-    description: 'Delivered comprehensive IT solutions and digital transformation for defence and security sector clients',
-  },
-];
+interface AchievementItem {
+  id: string;
+  title: string;
+  description: string | null;
+  icon: string | null;
+}
+
+const iconMap: Record<string, LucideIcon> = {
+  award: Award,
+  rocket: Rocket,
+  server: Server,
+  shield: Shield,
+  users: Users,
+  wrench: Wrench,
+};
 
 const happyClients = [
   'HQ Nigerian Army',
@@ -44,6 +28,34 @@ const happyClients = [
 ];
 
 export const Achievements = () => {
+  const [achievements, setAchievements] = useState<AchievementItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      const { data } = await supabase
+        .from('achievements')
+        .select('*')
+        .neq('icon', 'certification')
+        .order('sort_order', { ascending: true });
+      
+      setAchievements(data || []);
+      setLoading(false);
+    };
+
+    fetchAchievements();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="achievements" className="py-24">
+        <div className="container mx-auto px-6 flex justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="achievements" className="py-24">
       <div className="container mx-auto px-6">
@@ -54,31 +66,40 @@ export const Achievements = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {achievements.map((achievement, index) => (
-            <div
-              key={index}
-              className={`p-6 rounded-lg border card-hover ${
-                achievement.highlight
-                  ? 'bg-primary/10 border-primary/50'
-                  : 'bg-card border-border'
-              }`}
-            >
-              {achievement.highlight && (
-                <span className="text-xs font-mono text-primary mb-2 block">Award</span>
-              )}
-              <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-lg ${achievement.highlight ? 'bg-primary/20' : 'bg-secondary'}`}>
-                  <achievement.icon className="text-primary" size={24} />
+        {achievements.length > 0 && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {achievements.map((achievement) => {
+              const IconComponent = iconMap[achievement.icon || 'award'] || Award;
+              const isHighlight = achievement.icon === 'award';
+              
+              return (
+                <div
+                  key={achievement.id}
+                  className={`p-6 rounded-lg border card-hover ${
+                    isHighlight
+                      ? 'bg-primary/10 border-primary/50'
+                      : 'bg-card border-border'
+                  }`}
+                >
+                  {isHighlight && (
+                    <span className="text-xs font-mono text-primary mb-2 block">Award</span>
+                  )}
+                  <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-lg ${isHighlight ? 'bg-primary/20' : 'bg-secondary'}`}>
+                      <IconComponent className="text-primary" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-2">{achievement.title}</h3>
+                      {achievement.description && (
+                        <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2">{achievement.title}</h3>
-                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Happy Clients */}
         <div className="bg-card rounded-lg p-8 border border-border">
