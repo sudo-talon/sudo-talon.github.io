@@ -301,7 +301,7 @@ export const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Profile Image */}
           <motion.div
-            className="order-2 lg:order-1 flex justify-center lg:justify-start"
+            className="order-1 lg:order-1 flex justify-center lg:justify-start"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
@@ -385,7 +385,7 @@ export const Hero = () => {
 
           {/* Hero Content */}
           <motion.div
-            className="order-1 lg:order-2 text-center lg:text-left"
+            className="order-2 lg:order-2 text-center lg:text-left"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
