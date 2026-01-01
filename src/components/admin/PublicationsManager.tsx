@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MembershipsManager } from './MembershipsManager';
 
 interface Publication {
   id: string;
@@ -117,9 +119,15 @@ export const PublicationsManager = () => {
   if (loading) return <div className="flex justify-center p-8"><Loader2 className="h-6 w-6 animate-spin" /></div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Publications ({publications.length})</h2>
+    <Tabs defaultValue="publications" className="space-y-6">
+      <TabsList>
+        <TabsTrigger value="publications">Publications</TabsTrigger>
+        <TabsTrigger value="memberships">Professional Memberships</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="publications" className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Publications ({publications.length})</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => resetForm()}><Plus className="mr-2 h-4 w-4" /> Add Publication</Button>
@@ -200,6 +208,11 @@ export const PublicationsManager = () => {
         ))}
         {publications.length === 0 && <p className="text-center text-muted-foreground py-8">No publications yet.</p>}
       </div>
-    </div>
+      </TabsContent>
+      
+      <TabsContent value="memberships">
+        <MembershipsManager />
+      </TabsContent>
+    </Tabs>
   );
 };

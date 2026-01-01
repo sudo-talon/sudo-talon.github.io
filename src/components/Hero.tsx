@@ -12,7 +12,7 @@ const terminalCommands = [
   '$ helm upgrade --install app ./chart',
 ];
 
-const roles = ['DevOps Engineer', 'SRE', 'Cloud Architect'];
+const roles = ['DevOps Engineer', 'Cloud Architect'];
 
 interface Particle {
   id: number;
@@ -299,9 +299,9 @@ export const Hero = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Profile Image */}
+          {/* Profile Image - shows first on mobile */}
           <motion.div
-            className="order-2 lg:order-1 flex justify-center lg:justify-start"
+            className="order-1 lg:order-1 flex justify-center lg:justify-start"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
@@ -319,7 +319,7 @@ export const Hero = () => {
                 transition={{ duration: 3, repeat: Infinity }}
                 style={{ y: useTransform(springY, [0, 1], [-5, 5]) }}
               >
-                <img src={profileImage} alt="Engr Ikerionwu Ifeanyi" className="w-full h-full object-cover" />
+                <img src={profileImage} alt="Ikerionwu Ifeanyi" className="w-full h-full object-cover" />
               </motion.div>
               
               {/* Blue-Green Deployment Status */}
@@ -383,16 +383,16 @@ export const Hero = () => {
             </div>
           </motion.div>
 
-          {/* Hero Content */}
+          {/* Hero Content - shows second on mobile */}
           <motion.div
-            className="order-1 lg:order-2 text-center lg:text-left"
+            className="order-2 lg:order-2 text-center lg:text-left"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <p className="font-mono text-muted-foreground mb-2">&gt; Hello, I'm</p>
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              Engr Ikerionwu <span className="gradient-text">Ifeanyi</span>
+              Ikerionwu <span className="gradient-text">Ifeanyi</span>
             </h1>
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
