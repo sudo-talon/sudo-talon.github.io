@@ -131,6 +131,39 @@ export type Database = {
         }
         Relationships: []
       }
+      professional_memberships: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          member_since: string | null
+          name: string
+          sort_order: number | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          member_since?: string | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          member_since?: string | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           created_at: string

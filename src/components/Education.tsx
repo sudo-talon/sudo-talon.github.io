@@ -25,34 +25,33 @@ interface AchievementItem {
   icon: string | null;
 }
 
-const memberships = [
-  {
-    name: 'Cyber Security Experts Association of Nigeria (CSEAN)',
-    logo: 'https://csean.org.ng/wp-content/uploads/2020/03/csean-logo.png',
-  },
-  {
-    name: 'Nigerian Army Resource Centre (NARC)',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Nigerian_Army_logo.svg/200px-Nigerian_Army_logo.svg.png',
-  },
-];
+interface MembershipItem {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  website_url: string | null;
+}
 
 export const Education = () => {
   const [education, setEducation] = useState<EducationItem[]>([]);
   const [publications, setPublications] = useState<PublicationItem[]>([]);
   const [certifications, setCertifications] = useState<AchievementItem[]>([]);
+  const [memberships, setMemberships] = useState<MembershipItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [eduRes, pubRes, certRes] = await Promise.all([
+      const [eduRes, pubRes, certRes, memRes] = await Promise.all([
         supabase.from('education').select('*').order('sort_order', { ascending: true }),
         supabase.from('publications').select('*').order('sort_order', { ascending: true }),
         supabase.from('achievements').select('*').eq('icon', 'certification').order('sort_order', { ascending: true }),
+        supabase.from('professional_memberships').select('*').order('sort_order', { ascending: true }),
       ]);
 
       setEducation(eduRes.data || []);
       setPublications(pubRes.data || []);
       setCertifications(certRes.data || []);
+      setMemberships(memRes.data || []);
       setLoading(false);
     };
 
@@ -182,18 +181,32 @@ export const Education = () => {
             <div className="p-6 rounded-lg bg-secondary border border-border">
               <h3 className="font-semibold mb-6 text-foreground">Professional Memberships</h3>
               <div className="space-y-6">
-                {memberships.map((membership, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-lg bg-white/10 flex items-center justify-center p-2">
-                      <img
-                        src={membership.logo}
-                        alt={membership.name}
-                        className="max-w-full max-h-full object-contain"
-                      />
-                    </div>
-                    <p className="text-muted-foreground">{membership.name}</p>
-                  </div>
-                ))}
+                {memberships.length > 0 ? (
+                  memberships.map((membership) => (
+                    <a 
+                      key={membership.id} 
+                      href={membership.website_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+                    >
+                      <div className="w-16 h-16 rounded-lg bg-white/10 flex items-center justify-center p-2">
+                        {membership.logo_url ? (
+                          <img
+                            src={membership.logo_url}
+                            alt={membership.name}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        ) : (
+                          <Award className="text-primary" size={24} />
+                        )}
+                      </div>
+                      <p className="text-muted-foreground">{membership.name}</p>
+                    </a>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center">No memberships yet.</p>
+                )}
               </div>
             </div>
           </div>

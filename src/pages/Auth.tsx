@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, CheckSquare, Square } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { z } from 'zod';
 import profileImage from '@/assets/profile.jpeg';
 
@@ -20,6 +21,10 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notRobot, setNotRobot] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -73,6 +78,10 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    if (!notRobot) {
+      toast({ title: 'Verification required', description: 'Please confirm you are not a robot', variant: 'destructive' });
+      return;
+    }
     setLoading(true);
 
     try {
@@ -96,6 +105,63 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast({ title: 'Email required', description: 'Please enter your email address', variant: 'destructive' });
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) throw error;
+      toast({ title: 'Check your email', description: 'Password reset link has been sent to your email' });
+      setShowForgotPassword(false);
+      setResetEmail('');
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to send reset email', variant: 'destructive' });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
+        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
+          <source src="https://previews.customer.envatousercontent.com/h264-video-previews/e3dbe5fd-1bf1-4f5c-a0f9-acf49dbb2305/14602614.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10" />
+        <div className="relative z-20 w-full max-w-md mx-4">
+          <div className="bg-card/90 backdrop-blur-md border border-border rounded-2xl p-8 shadow-2xl">
+            <div className="text-center mb-8">
+              <img src={profileImage} alt="Ikerionwu Ifeanyi" className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 border-primary" />
+              <h1 className="text-2xl font-bold text-foreground">Reset Password</h1>
+              <p className="text-muted-foreground mt-2">Enter your email to receive a reset link</p>
+            </div>
+            <form onSubmit={handleForgotPassword} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="resetEmail">Email</Label>
+                <Input id="resetEmail" type="email" placeholder="Enter your email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
+              </div>
+              <Button type="submit" className="w-full" disabled={resetLoading}>
+                {resetLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Send Reset Link
+              </Button>
+            </form>
+            <div className="mt-6 text-center">
+              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-sm text-primary hover:underline">
+                Back to login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -129,6 +195,20 @@ const Auth = () => {
                 </button>
               </div>
               {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+              {isLogin && (
+                <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm text-primary hover:underline">
+                  Forgot password?
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-3 p-3 border border-border rounded-lg bg-muted/30">
+              <Checkbox 
+                id="notRobot" 
+                checked={notRobot} 
+                onCheckedChange={(checked) => setNotRobot(checked === true)}
+              />
+              <Label htmlFor="notRobot" className="text-sm cursor-pointer">I am not a robot</Label>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
@@ -138,7 +218,7 @@ const Auth = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <button type="button" onClick={() => { setIsLogin(!isLogin); setErrors({}); }} className="text-sm text-primary hover:underline">
+            <button type="button" onClick={() => { setIsLogin(!isLogin); setErrors({}); setNotRobot(false); }} className="text-sm text-primary hover:underline">
               {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
             </button>
           </div>
