@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Quote, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import chimeArinzeAvatar from '@/assets/chime-arinze-avatar.png';
 
 interface TestimonialItem {
   id: string;
@@ -8,7 +9,23 @@ interface TestimonialItem {
   author: string;
   role: string | null;
   organization: string | null;
+  avatar_url: string | null;
 }
+
+// Map of special avatar overrides using imported assets
+const avatarOverrides: Record<string, string> = {
+  'chime-arinze': chimeArinzeAvatar,
+};
+
+const getAvatarUrl = (avatarUrl: string | null): string | null => {
+  if (!avatarUrl) return null;
+  // Check if it's an override key
+  if (avatarOverrides[avatarUrl]) {
+    return avatarOverrides[avatarUrl];
+  }
+  // Otherwise assume it's a full URL
+  return avatarUrl;
+};
 
 export const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
@@ -63,11 +80,19 @@ export const Testimonials = () => {
                 "{testimonial.quote}"
               </p>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                  <span className="text-primary font-bold text-lg">
-                    {testimonial.author.charAt(0)}
-                  </span>
-                </div>
+                {getAvatarUrl(testimonial.avatar_url) ? (
+                  <img 
+                    src={getAvatarUrl(testimonial.avatar_url)!} 
+                    alt={testimonial.author}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-primary font-bold text-lg">
+                      {testimonial.author.charAt(0)}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <p className="font-semibold text-foreground">{testimonial.author}</p>
                   {testimonial.role && (
