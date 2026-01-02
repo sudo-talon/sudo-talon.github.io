@@ -242,6 +242,7 @@ export type Database = {
       testimonials: {
         Row: {
           author: string
+          avatar_url: string | null
           created_at: string
           id: string
           organization: string | null
@@ -252,6 +253,7 @@ export type Database = {
         }
         Insert: {
           author: string
+          avatar_url?: string | null
           created_at?: string
           id?: string
           organization?: string | null
@@ -262,6 +264,7 @@ export type Database = {
         }
         Update: {
           author?: string
+          avatar_url?: string | null
           created_at?: string
           id?: string
           organization?: string | null

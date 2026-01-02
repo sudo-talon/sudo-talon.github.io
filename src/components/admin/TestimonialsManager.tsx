@@ -19,6 +19,7 @@ interface Testimonial {
   author: string;
   role: string | null;
   organization: string | null;
+  avatar_url: string | null;
   sort_order: number | null;
 }
 
@@ -32,6 +33,7 @@ export const TestimonialsManager = () => {
     author: '',
     role: '',
     organization: '',
+    avatar_url: '',
     sort_order: 0,
   });
   const { toast } = useToast();
@@ -62,6 +64,7 @@ export const TestimonialsManager = () => {
       author: formData.author,
       role: formData.role || null,
       organization: formData.organization || null,
+      avatar_url: formData.avatar_url || null,
       sort_order: formData.sort_order,
     };
 
@@ -90,7 +93,7 @@ export const TestimonialsManager = () => {
 
     setIsDialogOpen(false);
     setEditingTestimonial(null);
-    setFormData({ quote: '', author: '', role: '', organization: '', sort_order: 0 });
+    setFormData({ quote: '', author: '', role: '', organization: '', avatar_url: '', sort_order: 0 });
     fetchTestimonials();
   };
 
@@ -101,6 +104,7 @@ export const TestimonialsManager = () => {
       author: testimonial.author,
       role: testimonial.role || '',
       organization: testimonial.organization || '',
+      avatar_url: testimonial.avatar_url || '',
       sort_order: testimonial.sort_order || 0,
     });
     setIsDialogOpen(true);
@@ -135,7 +139,7 @@ export const TestimonialsManager = () => {
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingTestimonial(null);
-              setFormData({ quote: '', author: '', role: '', organization: '', sort_order: 0 });
+              setFormData({ quote: '', author: '', role: '', organization: '', avatar_url: '', sort_order: 0 });
             }}>
               <Plus size={18} className="mr-2" />
               Add Testimonial
@@ -177,6 +181,14 @@ export const TestimonialsManager = () => {
                   value={formData.organization}
                   onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                   placeholder="e.g., Ministry of Defence"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Avatar URL</label>
+                <Input
+                  value={formData.avatar_url}
+                  onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
+                  placeholder="https://example.com/avatar.jpg"
                 />
               </div>
               <div>
