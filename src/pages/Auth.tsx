@@ -11,8 +11,17 @@ import { z } from 'zod';
 import profileImage from '@/assets/profile.jpeg';
 
 const authSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string()
+    .trim()
+    .email('Invalid email address')
+    .max(255, 'Email must be less than 255 characters'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(128, 'Password must be less than 128 characters')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character'),
 });
 
 const Auth = () => {
@@ -26,6 +35,8 @@ const Auth = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState<Date | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -77,6 +88,18 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check lockout
+    if (lockoutUntil && new Date() < lockoutUntil) {
+      const remainingSeconds = Math.ceil((lockoutUntil.getTime() - Date.now()) / 1000);
+      toast({ 
+        title: 'Too many attempts', 
+        description: `Please wait ${remainingSeconds} seconds before trying again`, 
+        variant: 'destructive' 
+      });
+      return;
+    }
+    
     if (!validateForm()) return;
     if (!notRobot) {
       toast({ title: 'Verification required', description: 'Please confirm you are not a robot', variant: 'destructive' });
@@ -86,12 +109,25 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        const { error } = await supabase.auth.signInWithPassword({ 
+          email: email.trim().toLowerCase(), 
+          password 
+        });
+        if (error) {
+          // Track failed attempts
+          const newCount = attemptCount + 1;
+          setAttemptCount(newCount);
+          if (newCount >= 5) {
+            setLockoutUntil(new Date(Date.now() + 30000)); // 30 second lockout
+            setAttemptCount(0);
+          }
+          throw error;
+        }
+        setAttemptCount(0);
         toast({ title: 'Welcome back!', description: 'You have successfully logged in.' });
       } else {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: email.trim().toLowerCase(),
           password,
           options: { emailRedirectTo: `${window.location.origin}/` },
         });
@@ -100,7 +136,13 @@ const Auth = () => {
         setIsLogin(true);
       }
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'An error occurred', variant: 'destructive' });
+      // Avoid exposing specific error details that could aid attackers
+      const safeMessage = error.message?.includes('Invalid login credentials') 
+        ? 'Invalid email or password' 
+        : error.message?.includes('User already registered')
+        ? 'An account with this email already exists'
+        : 'Authentication failed. Please try again.';
+      toast({ title: 'Error', description: safeMessage, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -108,8 +150,10 @@ const Auth = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resetEmail) {
-      toast({ title: 'Email required', description: 'Please enter your email address', variant: 'destructive' });
+    const emailSchema = z.string().trim().email('Invalid email address');
+    const validation = emailSchema.safeParse(resetEmail);
+    if (!validation.success) {
+      toast({ title: 'Invalid email', description: 'Please enter a valid email address', variant: 'destructive' });
       return;
     }
     setResetLoading(true);
