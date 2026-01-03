@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Loader2, CheckSquare, Square } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Home } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { z } from 'zod';
 import profileImage from '@/assets/profile.jpeg';
@@ -261,10 +261,16 @@ const Auth = () => {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
             <button type="button" onClick={() => { setIsLogin(!isLogin); setErrors({}); setNotRobot(false); }} className="text-sm text-primary hover:underline">
               {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
             </button>
+            <div>
+              <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Home size={16} />
+                Return Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>

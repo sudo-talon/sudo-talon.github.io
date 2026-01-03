@@ -16,7 +16,7 @@ export const About = () => {
               <span className="terminal-dot bg-red-500" />
               <span className="terminal-dot bg-yellow-500" />
               <span className="terminal-dot bg-green-500" />
-              <span className="ml-4 text-xs text-muted-foreground font-mono">about.txt</span>
+              <span className="ml-4 text-xs text-muted-foreground font-mono">about</span>
             </div>
             <div className="terminal-content space-y-4 text-muted-foreground">
               <p>
