@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Quote, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,10 +28,14 @@ const getAvatarUrl = (avatarUrl: string | null): string | null => {
   return avatarUrl;
 };
 
+const AUTO_PLAY_INTERVAL = 5000; // 5 seconds
+
 export const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -58,6 +62,30 @@ export const Testimonials = () => {
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
   };
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (testimonials.length <= 1 || isPaused) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    }, AUTO_PLAY_INTERVAL);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [testimonials.length, isPaused]);
+
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
 
   if (loading) {
     return (
@@ -104,7 +132,11 @@ export const Testimonials = () => {
           </button>
 
           {/* Testimonial Card */}
-          <div className="overflow-hidden">
+          <div 
+            className="overflow-hidden"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={testimonial.id}
