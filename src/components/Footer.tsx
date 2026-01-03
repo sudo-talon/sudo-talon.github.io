@@ -1,4 +1,4 @@
-import { Mail, Linkedin, Heart } from 'lucide-react';
+import { Mail, Linkedin } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -10,7 +10,7 @@ export const Footer = () => {
           </div>
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
-            Proudly designed with <Heart className="text-red-500 w-4 h-4" /> from Talongeeks © 2025 All rights reserved.
+            © 2025 All rights reserved.
           </div>
 
           <div className="flex items-center gap-4">
