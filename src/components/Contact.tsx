@@ -124,7 +124,7 @@ export const Contact = () => {
                 <span className="terminal-dot bg-red-500" />
                 <span className="terminal-dot bg-yellow-500" />
                 <span className="terminal-dot bg-green-500" />
-                <span className="ml-2 text-xs text-muted-foreground font-mono">talon-assistant.tsx</span>
+                <span className="ml-2 text-xs text-muted-foreground font-mono">Talon-AI.tsx</span>
               </div>
               <div className="flex items-center gap-2 text-primary text-xs">
                 <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
