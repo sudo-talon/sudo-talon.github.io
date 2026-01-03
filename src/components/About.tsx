@@ -16,19 +16,19 @@ export const About = () => {
               <span className="terminal-dot bg-red-500" />
               <span className="terminal-dot bg-yellow-500" />
               <span className="terminal-dot bg-green-500" />
-              <span className="ml-4 text-xs text-muted-foreground font-mono">about</span>
+              <span className="ml-4 text-xs text-muted-foreground font-mono">About Ikerionwu Ifeanyi Fredrick</span>
             </div>
             <div className="terminal-content space-y-4 text-muted-foreground">
               <p>
                 Award-winning IT professional with over 10 years of progressive experience 
                 driving digital transformation through Web Development, Linux System 
-                Administration and DevOps Engineering.
+                Administration and DevOps Engineering from a background of Cybersecurity 
               </p>
               <p>
                 Recognized for architecting and securing scalable on-premise and cloud 
-                infrastructures on AWS and GCP. Proven track record in leading the design 
-                and implementation of CI/CD pipelines, Infrastructure as Code (IaC) and 
-                Kubernetes orchestration within DevSecOps environments.
+                infrastructures on AWS and GCP. Certified Google Cloud Associate Engineer 
+                with proven track record in leading the design and implementation of CI/CD pipelines,
+                Infrastructure as Code (IaC) and Kubernetes orchestration within DevSecOps environments. 
               </p>
               <p>
                 Strategic thinker with a strong focus on cost optimization, compliance 

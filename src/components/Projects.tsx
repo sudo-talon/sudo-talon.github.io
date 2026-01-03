@@ -12,6 +12,9 @@ interface ProjectItem {
   published_date: string | null;
 }
 
+const toFileName = (title: string) =>
+  `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}.png`;
+
 export const Projects = () => {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +77,7 @@ export const Projects = () => {
                     <span className="terminal-dot bg-yellow-500" />
                     <span className="terminal-dot bg-green-500" />
                     <span className="ml-4 text-xs text-muted-foreground font-mono">
-                      project-{index + 1}.png
+                      {toFileName(project.title)}
                     </span>
                   </div>
                   <div className="relative aspect-video">

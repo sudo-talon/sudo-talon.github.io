@@ -96,10 +96,9 @@ export const ProjectsManager = () => {
     };
 
     if (editingProject) {
-      const { error } = await supabase
-        .from('projects')
-        .update(projectData)
-        .eq('id', editingProject.id);
+      const { error } = await supabase.functions.invoke('save-project', {
+        body: { action: 'update', project: { id: editingProject.id, ...projectData } },
+      });
 
       if (error) {
         toast({ title: 'Error', description: 'Failed to update project', variant: 'destructive' });
@@ -109,7 +108,9 @@ export const ProjectsManager = () => {
         resetForm();
       }
     } else {
-      const { error } = await supabase.from('projects').insert(projectData);
+      const { error } = await supabase.functions.invoke('save-project', {
+        body: { action: 'insert', project: projectData },
+      });
 
       if (error) {
         toast({ title: 'Error', description: 'Failed to create project', variant: 'destructive' });
@@ -125,7 +126,9 @@ export const ProjectsManager = () => {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
-    const { error } = await supabase.from('projects').delete().eq('id', id);
+    const { error } = await supabase.functions.invoke('save-project', {
+      body: { action: 'delete', id },
+    });
     
     if (error) {
       toast({ title: 'Error', description: 'Failed to delete project', variant: 'destructive' });

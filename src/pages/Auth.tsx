@@ -135,13 +135,16 @@ const Auth = () => {
         toast({ title: 'Account created!', description: 'You can now log in with your credentials.' });
         setIsLogin(true);
       }
-    } catch (error: any) {
-      // Avoid exposing specific error details that could aid attackers
-      const safeMessage = error.message?.includes('Invalid login credentials') 
-        ? 'Invalid email or password' 
-        : error.message?.includes('User already registered')
-        ? 'An account with this email already exists'
-        : 'Authentication failed. Please try again.';
+    } catch (error: unknown) {
+      let safeMessage = 'Authentication failed. Please try again.';
+      if (error instanceof Error) {
+        const msg = error.message || '';
+        safeMessage = msg.includes('Invalid login credentials')
+          ? 'Invalid email or password'
+          : msg.includes('User already registered')
+          ? 'An account with this email already exists'
+          : 'Authentication failed. Please try again.';
+      }
       toast({ title: 'Error', description: safeMessage, variant: 'destructive' });
     } finally {
       setLoading(false);
@@ -165,8 +168,9 @@ const Auth = () => {
       toast({ title: 'Check your email', description: 'Password reset link has been sent to your email' });
       setShowForgotPassword(false);
       setResetEmail('');
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Failed to send reset email', variant: 'destructive' });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send reset email';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     } finally {
       setResetLoading(false);
     }

@@ -10,7 +10,7 @@ export const Footer = () => {
           </div>
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
-            © 2025 All rights reserved.
+           with love from Talongeeks © 2025 All rights reserved.
           </div>
 
           <div className="flex items-center gap-4">

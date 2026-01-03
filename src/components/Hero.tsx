@@ -416,8 +416,8 @@ export const Hero = () => {
 
             <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto lg:mx-0">
               Award-winning IT professional bringing over a decade of experience in web development, 
-              Linux system administration, and DevOps engineering, delivering digital transformation 
-              solutions for the defence and security industry.
+              Linux System Administration and DevOps Engineering from a background of Cybersecurity,
+              delivering digital transformation solutions for the defence and security industry.
             </p>
 
             {/* Contact Links */}
