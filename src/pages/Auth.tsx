@@ -37,6 +37,7 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [attemptCount, setAttemptCount] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<Date | null>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -179,9 +180,11 @@ const Auth = () => {
   if (showForgotPassword) {
     return (
       <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
-        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
-          <source src="https://previews.customer.envatousercontent.com/h264-video-previews/e3dbe5fd-1bf1-4f5c-a0f9-acf49dbb2305/14602614.mp4" type="video/mp4" />
-        </video>
+        {!videoFailed && (
+          <video autoPlay loop muted playsInline preload="metadata" onError={() => setVideoFailed(true)} className="absolute inset-0 w-full h-full object-cover z-0">
+            <source src="https://previews.customer.envatousercontent.com/h264-video-previews/e3dbe5fd-1bf1-4f5c-a0f9-acf49dbb2305/14602614.mp4" type="video/mp4" />
+          </video>
+        )}
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10" />
         <div className="relative z-20 w-full max-w-md mx-4">
           <div className="bg-card/90 backdrop-blur-md border border-border rounded-2xl p-8 shadow-2xl">
@@ -213,9 +216,11 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
-      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
-        <source src="https://previews.customer.envatousercontent.com/h264-video-previews/e3dbe5fd-1bf1-4f5c-a0f9-acf49dbb2305/14602614.mp4" type="video/mp4" />
-      </video>
+      {!videoFailed && (
+        <video autoPlay loop muted playsInline preload="metadata" onError={() => setVideoFailed(true)} className="absolute inset-0 w-full h-full object-cover z-0">
+          <source src="https://previews.customer.envatousercontent.com/h264-video-previews/e3dbe5fd-1bf1-4f5c-a0f9-acf49dbb2305/14602614.mp4" type="video/mp4" />
+        </video>
+      )}
 
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10" />
 
@@ -243,20 +248,22 @@ const Auth = () => {
                 </button>
               </div>
               {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+            </div>
+
+            <div className="flex items-center justify-between p-3 border border-border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-3">
+                <Checkbox 
+                  id="notRobot" 
+                  checked={notRobot} 
+                  onCheckedChange={(checked) => setNotRobot(checked === true)}
+                />
+                <Label htmlFor="notRobot" className="text-sm cursor-pointer">I am not a robot</Label>
+              </div>
               {isLogin && (
                 <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm text-primary hover:underline">
                   Forgot password?
                 </button>
               )}
-            </div>
-
-            <div className="flex items-center space-x-3 p-3 border border-border rounded-lg bg-muted/30">
-              <Checkbox 
-                id="notRobot" 
-                checked={notRobot} 
-                onCheckedChange={(checked) => setNotRobot(checked === true)}
-              />
-              <Label htmlFor="notRobot" className="text-sm cursor-pointer">I am not a robot</Label>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>

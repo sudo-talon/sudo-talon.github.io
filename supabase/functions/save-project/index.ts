@@ -22,9 +22,9 @@ const payloadSchema = z.object({
   id: z.string().uuid().optional(),
 });
 
-serve(async (req) => {
+serve(async (req: Request) => {
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabase: any = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       global: {
         headers: { Authorization: req.headers.get("Authorization") ?? "" },
       },
@@ -38,11 +38,12 @@ serve(async (req) => {
       });
     }
 
-    const { data: roleData } = await supabase
+    const roleResp = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .single();
+    const roleData = roleResp.data as { role?: "admin" | "user" } | null;
 
     if (roleData?.role !== "admin") {
       return new Response(JSON.stringify({ error: "Forbidden" }), {
@@ -87,11 +88,11 @@ serve(async (req) => {
         published_date: project.published_date ?? null,
         sort_order: project.sort_order ?? 0,
       };
-      const { data, error } = await supabase.from("projects").insert(insertData).select("id").single();
+      const { data, error } = await supabase.from("projects").insert(insertData as any).select("id").single();
       if (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 400 });
       }
-      entityId = data.id;
+      entityId = (data as { id: string }).id;
       projectPayload = insertData;
     } else if (action === "update") {
       const project = parsed.data.project;
@@ -107,7 +108,7 @@ serve(async (req) => {
         published_date: project.published_date ?? null,
         sort_order: project.sort_order ?? 0,
       };
-      const { error } = await supabase.from("projects").update(updateData).eq("id", project.id);
+      const { error } = await supabase.from("projects").update(updateData as any).eq("id", project.id);
       if (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 400 });
       }
@@ -122,7 +123,7 @@ serve(async (req) => {
         entity: "projects",
         entity_id: entityId,
         payload: projectPayload ?? null,
-      });
+      } as any);
     }
 
     return new Response(JSON.stringify({ ok: true, id: entityId }), {
