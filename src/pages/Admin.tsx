@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut, User, Briefcase, GraduationCap, Award, FileText, Loader2, FolderKanban, MessageSquare } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
@@ -11,12 +13,16 @@ import { EducationManager } from '@/components/admin/EducationManager';
 import { AchievementsManager } from '@/components/admin/AchievementsManager';
 import { PublicationsManager } from '@/components/admin/PublicationsManager';
 import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
+import { z } from 'zod';
 
 const Admin = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('overview');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -154,6 +160,55 @@ const Admin = () => {
                   <p className="text-sm text-muted-foreground mt-1">Click to manage</p>
                 </div>
               ))}
+              <div className="p-6 bg-card border border-border rounded-xl">
+                <h3 className="font-semibold text-foreground mb-4">Change Password</h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input id="new-password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                  </div>
+                  <Button
+                    onClick={async () => {
+                      const schema = z.string()
+                        .min(8, 'Password must be at least 8 characters')
+                        .max(128, 'Password must be less than 128 characters')
+                        .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+                        .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+                        .regex(/[0-9]/, 'Must contain at least one number')
+                        .regex(/[^a-zA-Z0-9]/, 'Must contain at least one special character');
+                      if (newPassword !== confirmPassword) {
+                        toast({ title: 'Error', description: 'Passwords do not match', variant: 'destructive' });
+                        return;
+                      }
+                      try {
+                        schema.parse(newPassword);
+                      } catch (err) {
+                        const msg = err instanceof Error ? err.message : 'Invalid password';
+                        toast({ title: 'Invalid password', description: msg, variant: 'destructive' });
+                        return;
+                      }
+                      setPasswordLoading(true);
+                      const { error } = await supabase.auth.updateUser({ password: newPassword });
+                      setPasswordLoading(false);
+                      if (error) {
+                        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                      } else {
+                        setNewPassword('');
+                        setConfirmPassword('');
+                        toast({ title: 'Password updated', description: 'Your password has been changed.' });
+                      }
+                    }}
+                    disabled={passwordLoading}
+                  >
+                    {passwordLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Update Password
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
 

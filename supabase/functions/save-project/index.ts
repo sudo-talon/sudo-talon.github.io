@@ -2,8 +2,8 @@ import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.25.76";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const SUPABASE_URL = Deno.env.get("EDGE_SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("EDGE_SUPABASE_ANON_KEY")!;
 
 const projectSchema = z.object({
   id: z.string().uuid().optional(),

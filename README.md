@@ -1,68 +1,47 @@
 # Welcome to Engr. Ikerionwu Ifeanyi Fredrick
-## Portfolio Project info
+## DevOps | Cloud Architect Portfolio Project 
 
 **URL**: https://sudo-talon.github.io
 
-## How can I edit this code?
+Overview
 
-There are several ways of editing your application.
+- A modern, secure portfolio application with an admin dashboard for managing content (projects, experience, achievements, publications, certifications and testimonials etc).
+- Built with a performant React + Vite stack, styled with Tailwind and shadcn/ui, and backed by Supabase for auth, data, and Edge Functions.
+Key Features
 
-**Use Lovable**
+- Public landing page with polished UI and responsive layout.
+- Auth flow with login, signup, password reset, basic brute-force mitigation, and a human-verification checkbox.
+- Admin dashboard with CRUD managers for portfolio entities and sorted display order.
+- Server-side validation and audit logging for project write operations via a Supabase Edge Function.
+- SPA-friendly production routing on Vercel for deep links (e.g., /login , /admin ).
+Tech Stack
 
-Simply visit https://sudo-talon.github.io and start prompting.
+- Frontend: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
+- State & UX: React Hook Form, Radix UI components, Sonner/Toaster for notifications
+- Data & Auth: Supabase 
+- Serverless: Supabase Edge Functions 
+- Deployment: Vercel
+Architecture
 
-Changes made via Lovable will be committed automatically to this repo.
+- Routing: BrowserRouter with routes for / , /login , /admin , .
+- Admin managers use Supabase tables and an Edge Function for secure writes:
+  - Edge Function:  (Zod validation, admin role check, audit logs)
+  - Audit logs migration: supabase/migrations
+- SPA rewrites for Vercel to support client-side routes:
+  - vercel.json rewrites all paths to / to prevent 404 on deep links.
+Security
 
-**Use your preferred IDE**
+- Auth required for admin access; role lookup in user_roles table before allowing writes.
+- Server-side payload validation with Zod to prevent malformed data.
+- Audit logs written to admin_audit_logs for insert/update/delete actions on projects .
+- Supabase Row Level Security recommended/enforced for sensitive tables.
+- No secrets committed; .env is gitignored ( .gitignore:25 ).
+Local Development
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open https://sudo-talon.github.io and click on Share -> Publish.
-
+- Start dev server: npm run dev (default at http://localhost:8080/ )
+- Lint: npm run lint
+- Build: npm run build
+- Preview build: npm run preview
 ## Can I connect a custom domain to my portfolio project?
 
 Yes, you can!
